@@ -170,6 +170,29 @@ Edit
 [Load in Three.js via GLTFLoader]
 
 
+--
+
+## Reducing draw calls:
+
+✅ 1. Merge Meshes with the Same Material
+Each mesh with a unique material = 1 draw call.
+
+Solution: Merge meshes that share the same material into a single mesh.
+
+Tools:
+Blender:
+
+Join objects (Ctrl + J) that use the same material.
+
+gltf-transform:
+gltf-transform weld input.glb output.glb
+gltf-transform merge output.glb merged.glb
+
+merge combines compatible nodes/meshes.
+weld removes duplicated vertices.
+
+
+
 
   
 
