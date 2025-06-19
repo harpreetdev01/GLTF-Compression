@@ -334,24 +334,6 @@ loader.load('model-draco.glb', (gltf) => {
 
 ---
 
-## ✅ Final Output
-
-Use `model-draco.glb` (or the latest step you completed) in your Three.js project:
-
-```js
-import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
-import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
-
-const loader = new GLTFLoader();
-
-const dracoLoader = new DRACOLoader();
-dracoLoader.setDecoderPath('/path/to/draco/'); // e.g., './draco/' folder with decoder files
-loader.setDRACOLoader(dracoLoader);
-
-loader.load('model-draco.glb', (gltf) => {
-  scene.add(gltf.scene);
-});
-
 ## 🔍 Optional Tools for Analysis
 
 | Tool | Purpose |
