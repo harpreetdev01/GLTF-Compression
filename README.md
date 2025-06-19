@@ -249,6 +249,52 @@ Unused nodes
 Baking materials into one texture map:
 https://www.youtube.com/watch?v=wG6ON8wZYLc&t=4s
 
+--
+
+## So there should be a new .glb file for say when we use uastc and then prune have  a new .glb file too?
+
+Yes — each time you apply an optimization step like uastc, prune, simplify, or merge, you should generate a new .glb file as the output. This gives you:
+A clean chain of transformation (easier to debug or rollback), <br>
+Full control over each step’s result, <br>
+The ability to analyze size/performance gains per step. <br>
+
+✅ Example Workflow with .glb Versions
+Let’s say your original file is:
+
+model-original.glb
+You would run steps like this:
+
+1. Compress textures using UASTC
+
+gltf-transform uastc model-original.glb model-uastc.glb
+model-uastc.glb now has GPU-compressed textures (KTX2).
+
+2. Prune unused data
+
+gltf-transform prune model-uastc.glb model-uastc-pruned.glb
+model-uastc-pruned.glb removes unused materials, nodes, etc.
+
+3. Optional: Merge geometries or weld vertices
+
+gltf-transform merge model-uastc-pruned.glb model-merged.glb
+model-merged.glb now has fewer draw calls from merged meshes.
+
+4. Optional: Geometry simplification
+
+gltf-transform simplify model-merged.glb model-simplified.glb --ratio 0.7
+model-simplified.glb now has lower poly count.
+
+🎯 Final File:
+Use the last one (model-simplified.glb, or whichever is final in your chain) in Three.js or React Three Fiber.
+
+✅ Benefits of Creating New Files for Each Step:
+Reason	Benefit
+Debug step-by-step	See what broke and where
+Analyze file size reductions	Optimize each step separately
+Easier backups / rollbacks	Restore from any step
+Safer CLI use	Avoid overwriting accidentally
+
+
 
 
 
