@@ -258,6 +258,9 @@ Unused nodes
 | Prune unused nodes/materials        | `gltf-transform prune`          |
 | Bake lighting into textures         | Blender light baking            |
 
+Baking materials into one texture map:
+https://www.youtube.com/watch?v=wG6ON8wZYLc&t=4s
+
 
 
 
