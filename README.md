@@ -191,6 +191,77 @@ gltf-transform merge output.glb merged.glb
 merge combines compatible nodes/meshes.
 weld removes duplicated vertices.
 
+2. Use a Single Material or Texture Atlas
+Problem: More materials = more draw calls.
+
+Solution 1: Use one material per model.
+Combine all texture maps into a single texture atlas (e.g., in Blender or with tools like TexturePacker).
+
+Map UVs accordingly.
+
+Solution 2: Use gltf-transform instance to reuse geometry without duplicating draw calls (ideal for trees, props, etc.)
+
+
+✅ 3. Use Instancing (for repeated objects)
+If you have many identical objects (like trees, rocks, tiles), draw them with InstancedMesh instead of adding each one individually.
+
+Example:
+js
+Copy
+Edit
+const geometry = new BoxGeometry();
+const material = new MeshStandardMaterial();
+const mesh = new InstancedMesh(geometry, material, 100);
+
+for (let i = 0; i < 100; i++) {
+  const matrix = new Matrix4().makeTranslation(i, 0, 0);
+  mesh.setMatrixAt(i, matrix);
+}
+scene.add(mesh);
+Result:
+All 100 boxes = 1 draw call.
+
+✅ 4. Avoid Too Many Skinned Meshes or Lights
+Each skinned mesh or light increases shader complexity and draw calls.
+
+Consider baking lighting and animations into textures or morph targets.
+
+✅ 5. Bake Materials and Lighting
+Instead of using real-time lighting and shadows:
+
+Bake everything into textures (lightmaps, AO).
+
+Use unlit or simple materials.
+
+Reduces shaders and draw calls.
+
+✅ 6. Remove Unused Nodes and Materials
+Use:
+
+bash
+Copy
+Edit
+gltf-transform prune input.glb output.glb
+This will delete:
+
+Unused meshes
+
+Unused materials
+
+Unused nodes
+
+🔍 Use gltf-transform inspect or tools like gltf.report to analyze draw calls and scene structure.
+
+✅ Summary: How to Reduce Draw Calls
+| Strategy                            | Tool/Method                     |
+| ----------------------------------- | ------------------------------- |
+| Merge meshes with same material     | Blender, `gltf-transform merge` |
+| Use fewer materials / texture atlas | Blender, TexturePacker          |
+| Use instancing for repeated items   | Three.js `InstancedMesh`        |
+| Prune unused nodes/materials        | `gltf-transform prune`          |
+| Bake lighting into textures         | Blender light baking            |
+
+
 
 
 
