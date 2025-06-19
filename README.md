@@ -62,9 +62,6 @@ Tool:
 
 gltfjsx
 
-bash
-Copy
-Edit
 npx gltfjsx output-compressed.glb
 This creates a React/Three.js component from your optimized .glb.
 
@@ -81,9 +78,7 @@ Not getting the benefit of compressed textures in your JSX file unless you re-im
 After both steps, you can re-run gltf-transform prune to remove any unused elements introduced during conversion.
 
 ✅ Summary of Best Order:
-csharp
-Copy
-Edit
+
 [Original GLB/GLTF]
       ↓
 [Compress textures + optimize via gltf-transform]
@@ -99,7 +94,7 @@ Let me know if you're using Draco, Meshopt, or UASTC and I can tailor a command 
 
 
 You said:
-what if I dont want a react component?
+## What if I dont want a react component?
 
 
 ChatGPT said:
@@ -108,33 +103,26 @@ If you don’t want a React component, and you're working with vanilla Three.js,
 Instead, your optimization pipeline should look like this:
 
 ✅ Recommended Optimization Workflow for Vanilla Three.js (no React):
-1. Start with Texture Compression (using gltf-transform)
+
+1. Start with Texture Compression (using gltf-transform)<br>
 This is your most important optimization for real-world web performance.
 
 Use UASTC or ETC1S with KTX2 to compress textures.
 
-bash
-Copy
-Edit
-gltf-transform uastc input.glb output.glb
+gltf-transform uastc input.glb output.glb<br>
+
 You can also run:
 
-bash
-Copy
-Edit
-gltf-transform prune output.glb output-optimized.glb
-Optional: Use draco or meshopt for geometry compression.
+gltf-transform prune output.glb output-optimized.glb<br>  
 
-bash
-Copy
-Edit
-gltf-transform draco output-optimized.glb output-final.glb
+Optional: Use draco or meshopt for geometry compression.
+gltf-transform draco output-optimized.glb output-final.glb<br>  
+
+
 2. Load in Vanilla Three.js
 You now just load the final .glb file using GLTFLoader in Three.js:
 
-js
-Copy
-Edit
+JS:<br>
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const loader = new GLTFLoader();
