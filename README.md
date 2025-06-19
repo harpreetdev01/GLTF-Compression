@@ -295,18 +295,76 @@ Easier backups / rollbacks	              Restore from any step
 Safer CLI use	                          Avoid overwriting accidentally
 
 
-# GLB Optimization Workflow
+# GLB Optimization Workflow for Three.js (Vanilla)
+
+This workflow shows how to optimize a `.glb` file step-by-step using [gltf-transform](https://gltf-transform.donmccurdy.com/) and [Draco compression](https://google.github.io/draco/), producing smaller files with fewer draw calls and better runtime performance.
+
+---
+
+## 🛠️ Optimization Steps
 
 | Step | Command Example | Input File | Output File | Purpose |
 |------|------------------|------------|-------------|---------|
-| 1. Texture Compression (UASTC) | `gltf-transform uastc model-original.glb model-uastc.glb` | `model-original.glb` | `model-uastc.glb` | Compress textures using GPU-friendly UASTC (KTX2) format |
-| 2. Prune Unused Data | `gltf-transform prune model-uastc.glb model-uastc-pruned.glb` | `model-uastc.glb` | `model-uastc-pruned.glb` | Remove unused materials, nodes, and accessors |
-| 3. Merge Meshes | `gltf-transform merge model-uastc-pruned.glb model-merged.glb` | `model-uastc-pruned.glb` | `model-merged.glb` | Combine meshes with shared materials to reduce draw calls |
-| 4. Simplify Geometry (Optional) | `gltf-transform simplify model-merged.glb model-simplified.glb --ratio 0.7` | `model-merged.glb` | `model-simplified.glb` | Reduce polygon count while preserving shape |
+| 1. Compress Textures (UASTC) | `gltf-transform uastc model-original.glb model-uastc.glb` | `model-original.glb` | `model-uastc.glb` | GPU-friendly texture compression (KTX2 + UASTC) |
+| 2. Prune Unused Data | `gltf-transform prune model-uastc.glb model-uastc-pruned.glb` | `model-uastc.glb` | `model-uastc-pruned.glb` | Remove unused nodes, materials, textures |
+| 3. Merge Meshes | `gltf-transform merge model-uastc-pruned.glb model-merged.glb` | `model-uastc-pruned.glb` | `model-merged.glb` | Merge meshes to reduce draw calls |
+| 4. Simplify Geometry (Optional) | `gltf-transform simplify model-merged.glb model-simplified.glb --ratio 0.7` | `model-merged.glb` | `model-simplified.glb` | Reduce polygon count (optional) |
+| 5. Compress Geometry (Draco) | `gltf-transform draco model-simplified.glb model-draco.glb` | `model-simplified.glb` | `model-draco.glb` | Compress geometry using Draco to reduce file size |
 
-## Final Output
+---
 
-Use the final optimized `.glb` file (e.g. `model-simplified.glb`) in your Three.js or WebGL project for best performance.
+## ✅ Final Output
+
+Use `model-draco.glb` (or the latest step you completed) in your Three.js project:
+
+```js
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+
+const loader = new GLTFLoader();
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('/path/to/draco/'); // e.g., './draco/' folder with decoder files
+loader.setDRACOLoader(dracoLoader);
+
+loader.load('model-draco.glb', (gltf) => {
+  scene.add(gltf.scene);
+});
+
+
+---
+
+## ✅ Final Output
+
+Use `model-draco.glb` (or the latest step you completed) in your Three.js project:
+
+```js
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { DRACOLoader } from 'three/examples/jsm/loaders/DRACOLoader.js';
+
+const loader = new GLTFLoader();
+
+const dracoLoader = new DRACOLoader();
+dracoLoader.setDecoderPath('/path/to/draco/'); // e.g., './draco/' folder with decoder files
+loader.setDRACOLoader(dracoLoader);
+
+loader.load('model-draco.glb', (gltf) => {
+  scene.add(gltf.scene);
+});
+
+## 🔍 Optional Tools for Analysis
+
+| Tool | Purpose |
+|------|---------|
+| [`gltf-transform inspect`](https://gltf-transform.donmccurdy.com/) | CLI tool to inspect mesh/material count, draw calls |
+| [gltf.report](https://gltf.report) | Online viewer to inspect performance & validation |
+| [gltf-viewer.donmccurdy.com](https://gltf-viewer.donmccurdy.com/) | Web viewer for checking compression & rendering |
+
+📝 Notes
+
+- Draco compression requires the decoder (JavaScript or WASM) to be included in your project.
+- Texture compression (UASTC) requires `KTX2Loader`, Basis Universal transcoder, and proper `KTX2Loader` setup (optional for basic GLB loading).
+- This workflow keeps all steps modular and reversible.
 
 
 
