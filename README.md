@@ -266,35 +266,47 @@ You would run steps like this:
 
 1. Compress textures using UASTC
 
-gltf-transform uastc model-original.glb model-uastc.glb
+gltf-transform uastc model-original.glb model-uastc.glb<br>
 model-uastc.glb now has GPU-compressed textures (KTX2).
 
 2. Prune unused data
 
-gltf-transform prune model-uastc.glb model-uastc-pruned.glb
+gltf-transform prune model-uastc.glb model-uastc-pruned.glb<br>
 model-uastc-pruned.glb removes unused materials, nodes, etc.
 
 3. Optional: Merge geometries or weld vertices
 
-gltf-transform merge model-uastc-pruned.glb model-merged.glb
+gltf-transform merge model-uastc-pruned.glb model-merged.glb<br>
 model-merged.glb now has fewer draw calls from merged meshes.
 
 4. Optional: Geometry simplification
 
-gltf-transform simplify model-merged.glb model-simplified.glb --ratio 0.7
+gltf-transform simplify model-merged.glb model-simplified.glb --ratio 0.7<br>
 model-simplified.glb now has lower poly count.
 
 🎯 Final File:
 Use the last one (model-simplified.glb, or whichever is final in your chain) in Three.js or React Three Fiber.
 
 ✅ Benefits of Creating New Files for Each Step:
-Reason	Benefit
-Debug step-by-step	See what broke and where
-Analyze file size reductions	Optimize each step separately
-Easier backups / rollbacks	Restore from any step
-Safer CLI use	Avoid overwriting accidentally
+Reason	                                Benefit
+Debug step-by-step	                    See what broke and where
+Analyze file size reductions	              Optimize each step separately
+Easier backups / rollbacks	              Restore from any step
+Safer CLI use	                          Avoid overwriting accidentally
 
 
+# GLB Optimization Workflow
+
+| Step | Command Example | Input File | Output File | Purpose |
+|------|------------------|------------|-------------|---------|
+| 1. Texture Compression (UASTC) | `gltf-transform uastc model-original.glb model-uastc.glb` | `model-original.glb` | `model-uastc.glb` | Compress textures using GPU-friendly UASTC (KTX2) format |
+| 2. Prune Unused Data | `gltf-transform prune model-uastc.glb model-uastc-pruned.glb` | `model-uastc.glb` | `model-uastc-pruned.glb` | Remove unused materials, nodes, and accessors |
+| 3. Merge Meshes | `gltf-transform merge model-uastc-pruned.glb model-merged.glb` | `model-uastc-pruned.glb` | `model-merged.glb` | Combine meshes with shared materials to reduce draw calls |
+| 4. Simplify Geometry (Optional) | `gltf-transform simplify model-merged.glb model-simplified.glb --ratio 0.7` | `model-merged.glb` | `model-simplified.glb` | Reduce polygon count while preserving shape |
+
+## Final Output
+
+Use the final optimized `.glb` file (e.g. `model-simplified.glb`) in your Three.js or WebGL project for best performance.
 
 
 
