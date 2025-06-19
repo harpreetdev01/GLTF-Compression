@@ -42,12 +42,9 @@ Compressing them with ktx2 (Basis Universal or UASTC) can significantly reduce f
 Tools:
 
 gltf-transform – Use commands like:
-
-bash
-Copy
-Edit
 gltf-transform uastc input.glb output.glb
 gltf-transform prune output.glb output-compressed.glb
+
 This compresses textures without modifying geometry or scene structure.
 
 2. Optimize Geometry / Convert to JSX with gltfjsx
